@@ -7,6 +7,7 @@
 // Parameters: pointer to jobs, command string
 // Returns: 0 - success,1 - failure
 //**************************************************************************************
+//im here
 int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 {
 	char* cmd; 
