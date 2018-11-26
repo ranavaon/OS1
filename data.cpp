@@ -28,7 +28,7 @@
 			if((*iterator)->get_state())
 				cout << "[" << i << "] : " << (*iterator)->get_pid() << (*iterator)->get_how_old()<< "secs" << endl;
 			else
-				cout << "[" << i << "] : " << (*iterator)->get_pid() << (*iterator)->get_how_old()<< "secs" << "(stoped)" << endl;
+				cout << "[" << i << "] : " << (*iterator)->get_pid() << (*iterator)->get_how_old()<< "secs" << "(Stopped)" << endl;
 			i++;
 		}
 
@@ -102,7 +102,7 @@
 	}
 
 
-	void smash_data::delete_job(int job_index){
+	void smash_data::delete_bg_job(int job_index){
 		auto job_to_delete = this->bg_jobs.begin();
 		for(int i=0; i<job_index; i++){
 			iter++;
