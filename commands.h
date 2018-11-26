@@ -1,19 +1,32 @@
 #ifndef _COMMANDS_H
 #define _COMMANDS_H
-#include <unistd.h> 
+
+#include <iostream>
+#include <unistd.h>
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include "data.h"
+#include "signals.h"
+
+#define MAX_PROCESSES 100
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
-typedef enum { FALSE , TRUE } bool;
-int ExeComp(char* lineSize);
-int BgCmd(char* lineSize, void* jobs);
-int ExeCmd(void* jobs, char* lineSize, char* cmdString);
-void ExeExternal(char *args[MAX_ARG], char* cmdString);
-#endif
+#define MKDIR_PERMISSIONS 00777
+#define WAITFORSIGTERM 5
 
+using namespace std;
+
+int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash);
+void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash);
+int ExeComp(smash_data* Smash);
+int BgCmd(smash_data* Smash);
+
+
+#endif
