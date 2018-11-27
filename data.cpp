@@ -1,3 +1,12 @@
+/*
+ * data.cpp
+ *
+ *  Created on: Nov 27, 2018
+ *      Author: os
+ */
+
+
+
 #include "data.h"
 
 	time_t job::get_how_old(){
@@ -6,8 +15,12 @@
 	}
 
 	void smash_data::set_pwd(char* new_pwd){
-		strcpy(this->last_pwd, (this-> current_pwd));
-		strcpy(this->current_pwd, new_pwd);
+		const char* pwd_temp = (this-> current_pwd);
+		const char* new_pwd_const = new_pwd;
+		//cout<< new_pwd_const<< endl;
+		//cout<< pwd_temp<< endl;
+		strcpy(this->last_pwd, pwd_temp);
+		strcpy(this->current_pwd, new_pwd_const);
 	} // need to implement this method
 
 	void smash_data::print_history()
@@ -24,23 +37,25 @@
 	}
 	void smash_data::print_bg_job(){
 		int i=1;
-		for(auto iterator = this->bg_jobs.begin(); iterator != bg_jobs.end(); iterator++){
+		for(list<job*>::iterator iterator = (this->bg_jobs).begin(); iterator != (this->bg_jobs).end(); iterator++){
 			if((*iterator)->get_state())
-				cout << "[" << i << "] : " << (*iterator)->get_pid() << (*iterator)->get_how_old()<< "secs" << endl;
+				cout << "[" << i << "] "<< (*iterator)-> get_name() <<  " : " << (*iterator)->get_pid() << " " << (*iterator)->get_how_old()<< " secs" << endl;
 			else
-				cout << "[" << i << "] : " << (*iterator)->get_pid() << (*iterator)->get_how_old()<< "secs" << "(Stopped)" << endl;
+				cout << "[" << i << "] "<< (*iterator)-> get_name() <<  " : " << (*iterator)->get_pid() << (*iterator)->get_how_old()<< "secs" << "(Stopped)" << endl;
 			i++;
 		}
 
-	} 
+	}
 
 
 	string smash_data::get_job_name(int job_index){
-		auto iter = this->bg_jobs.begin();
+		if(job_index == 0)
+			return "-1";
+		list<job*>::iterator iter = this->bg_jobs.begin();
 		for(int i=1; i<=job_index; i++){
 			iter++;
 		}
-		if(iter == NULL || *iter == NULL){
+		if(*iter == NULL){
 			return "-1";
 		}
 		return (*iter)->get_name();
@@ -49,11 +64,11 @@
 
 
 	int smash_data::move_to_fg(int job_index){
-		auto iter = this->bg_jobs.begin();
+		list<job*>::iterator iter = this->bg_jobs.begin();
 		for(int i=1; i<=job_index; i++){
 			iter++;
 		}
-		if(iter == NULL || *iter == NULL){
+		if(*iter == NULL){
 			return 1;
 		}
 		this -> fg_job = *iter;
@@ -67,33 +82,33 @@
 		return 0;
 	}
 
-	
+
 
 	int smash_data::move_to_bg(int job_index_to_bg){
-		if(job_index_to_bg == 0){// case no job id mentined
-			auto job_to_bg = this->bg_jobs.begin();
-			for(auto iter = job_to_bg; iter != bg_jobs.end(); iter++){
+		if(job_index_to_bg == 0){// case no job id mentioned
+			list<job*>::iterator job_to_bg = this->bg_jobs.begin();
+			for(list<job*>::iterator iter = job_to_bg; iter != bg_jobs.end(); iter++){
 				if((*iter)->get_state() == SUSPENDED){
 					job_to_bg = iter;
 				}
 			}
-			if((job_to_bg != NULL) && ((job_to_bg != bg_jobs.begin())||((*job_to_bg)->get_state == SUSPENDED))){// means there is a suspended job
+			if((*job_to_bg != NULL) && ((job_to_bg != bg_jobs.begin())||((*job_to_bg)->get_state() == SUSPENDED))){// means there is a suspended job
 				cout << "signal SIGCONT was sent to pid " << (*job_to_bg)->get_pid() << endl;
 				(*job_to_bg)->set_state(RUNNING);
 				kill((*job_to_bg)->get_pid(), SIGCONT);
 				return 0;
 			}
 		}
-		auto job_to_bg = this->bg_jobs.begin();
+		list<job*>::iterator job_to_bg = this->bg_jobs.begin();
 		for(int i=0; i<job_index_to_bg; i++){
-			iter++;
+			job_to_bg++;
 		}
-		if ((*iter)->get_state() == RUNNING){ // in case that job is already running
+		if ((*job_to_bg)->get_state() == RUNNING){ // in case that job is already running
 			return 0;
 		}
-		cout << "signal SIGCONT was sent to pid " << (*iter)->get_pid() << endl;
-		(*iter)->set_state(true);
-		kill((*iter)->get_pid(), SIGCONT);
+		cout << "signal SIGCONT was sent to pid " << (*job_to_bg)->get_pid() << endl;
+		(*job_to_bg)->set_state(RUNNING);
+		kill((*job_to_bg)->get_pid(), SIGCONT);
 		return 0;
 	}
 
@@ -103,11 +118,11 @@
 
 
 	void smash_data::delete_bg_job(int job_index){
-		auto job_to_delete = this->bg_jobs.begin();
+		list<job*>::iterator job_to_delete = this->bg_jobs.begin();
 		for(int i=0; i<job_index; i++){
-			iter++;
+			job_to_delete++;
 		}
-		bg_jobs.erase(iter);
+		bg_jobs.erase(job_to_delete);
 	}
 
 
@@ -115,7 +130,7 @@
 
 	void smash_data::kill_all_jobs(){
 		int i = 1;
-		for(auto iter = bg_jobs.begin(); iter != bg_jobs.end(); iter++){
+		for(list<job*>::iterator iter = bg_jobs.begin(); iter != bg_jobs.end(); iter++){
 			cout << "[" << i << "] " << (*iter)->get_name() << " - Sending SIGTERM... ";
 			int start = (int)time(NULL);
 			kill((*iter)->get_pid(), SIGCONT);
@@ -123,7 +138,7 @@
 			if (!waitpid((*iter)->get_pid(), NULL, WNOHANG))
 			{
 				cout << "(" << WAITFORSIGTERM << " sec passed) Sending SIGKILL... ";
-				kill((*it)->getPID(), SIGKILL);
+				kill((*iter)->get_pid(), SIGKILL);
 			}
 			cout << "Done." << endl;
 			bg_jobs.erase(iter);

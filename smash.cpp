@@ -1,9 +1,13 @@
-/*	smash.c
-main file. This file contains the main function of smash
-*******************************************************************/
+/*
+ * smash.cpp
+ *
+ *  Created on: Nov 27, 2018
+ *      Author: os
+ */
+
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,20 +21,20 @@ main file. This file contains the main function of smash
 
 char* L_Fg_Cmd;
 void* jobs = NULL; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
-char lineSize[MAX_LINE_SIZE]; 
+char lineSize[MAX_LINE_SIZE];
 //**************************************************************************************
 // function name: main
 // Description: main function of smash. get command from user and calls command functions
 //**************************************************************************************
 int main(int argc, char *argv[])
 {
-		   
 
-	
-	//signal declaretions
+
+
+	//signal declarations
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
 	 /* add your code here */
-	
+
 	/************************************/
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
 	//set your signal handlers here
@@ -39,33 +43,35 @@ int main(int argc, char *argv[])
 	/************************************/
 
 	/************************************/
-	// Init globals 
-	smash_data my_smash;// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!put as an argument this process's PID!!!!!!!!!!!!!!!!!!!!!!!!!!
-    char cmdString[MAX_LINE_SIZE]; 
+	// Init globals
+	smash_data my_smash(getpid(),time(NULL));// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!put as an argument this process's PID!!!!!!!!!!!!!!!!!!!!!!!!!!
+    char cmdString[MAX_LINE_SIZE];
 
-	
+
 	L_Fg_Cmd =(char*)malloc(sizeof(char)*(MAX_LINE_SIZE+1));
-	if (L_Fg_Cmd == NULL) 
-			exit (-1); 
+	if (L_Fg_Cmd == NULL)
+			exit (-1);
 	L_Fg_Cmd[0] = '\0';
-	
-    while (!my_smash.quit)
+
+    while (!my_smash.is_quit())
     {
 	 	cout << "smash > ";
 		fgets(lineSize, MAX_LINE_SIZE, stdin);
-		strcpy(cmdString, lineSize);    	
+		strcpy(cmdString, lineSize);
 		cmdString[strlen(lineSize)-1]='\0';
 					// perform a complicated Command
-		if(!ExeComp(lineSize)) continue; 
-					// background command	
-	 	if(!BgCmd(lineSize, &my_smash)) continue; 
+		if(!ExeComp(lineSize)) continue;
+					// background command
+	 	if(!BgCmd(lineSize, &my_smash)) continue;
 					// built in commands
 		ExeCmd(lineSize, cmdString, &my_smash);
-		
+
 		/* initialize for next line read*/
 		lineSize[0]='\0';
 		cmdString[0]='\0';
 	}
     return 0;
 }
+
+
 

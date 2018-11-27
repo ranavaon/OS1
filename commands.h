@@ -1,3 +1,4 @@
+
 #ifndef _COMMANDS_H
 #define _COMMANDS_H
 
@@ -25,8 +26,10 @@ using namespace std;
 
 int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash);
 void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash);
-int ExeComp(smash_data* Smash);
-int BgCmd(smash_data* Smash);
+int ExeComp(char* lineSize);
+int BgCmd(char* lineSize,smash_data* Smash);
 
 
 #endif
+
+
