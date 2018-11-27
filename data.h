@@ -60,12 +60,13 @@ public:
 	int move_to_bg(int job_index_to_bg);
 	void kill_all_jobs();
 	void add_new_bg_job(pid_t pid_, time_t time_, string name_);
-	void delete_job(int job_index);
+	void delete_bg_job(int job_index);
 	void delete_fg_job(){delete fg_job;}
 	void add_job_to_fg(pid_t pid_, time_t time_, string name_){fg_job =new job(pid_,time_,name_);}
+	job* get_fg_job(){return fg_job;}
 
-	bool quit;
 private:
+	bool quit;
 	char* current_pwd[MAX_LINE_SIZE];
 	char* last_pwd[MAX_LINE_SIZE];
 	list<char*> history;
