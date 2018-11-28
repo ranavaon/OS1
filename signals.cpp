@@ -1,3 +1,10 @@
+/*
+ * signals.cpp
+ *
+ *  Created on: Nov 27, 2018
+ *      Author: os
+ */
+
 // signals.c
 // contains signal handler funtions
 // contains the function/s that set the signal handlers
@@ -55,4 +62,6 @@ void sigHandler(int signal)
 		break;
 	}
 }
+
+
 

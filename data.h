@@ -15,16 +15,16 @@
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 #define MAX_PROCESSES 100
+#define WAITFORSIGTERM 5
 
 using namespace std;
 
-//typedef bool(SUSPENDED = 0, RUNNING = 1)run_state;
-//typedef bool  run_state ;//(SUSPENDED = 0, RUNNING = 1)
+
 typedef enum {SUSPENDED,RUNNING} run_state;
 
 class job{
 public:
-	job(pid_t pid_, time_t time, string name_):PID(pid_),birth_time_stamp(time),state(true), name(name_){}
+	job(pid_t pid_, time_t time, string name_):PID(pid_),birth_time_stamp(time),name(name_){state = RUNNING;}
 	int get_pid(){return PID;}
 	time_t get_birth_time(){return birth_time_stamp;}
 	time_t get_how_old();// needs to be implemented
@@ -46,14 +46,14 @@ private:
 
 class smash_data: public job{
 public:
-	smash_data(pid_t smash_pid, time_t time):job(smash_pid,time,"smash"), quit(false){bg_jobs.push_front(this),fg_job=NULL;
+	smash_data(pid_t smash_pid, time_t time):job(smash_pid,time,"smash"), quit_(false),current_pwd(NULL),last_pwd(NULL){bg_jobs.push_front(this),fg_job=NULL;
 	}// check how to get time stamp!
 	char* get_current_pwd(){return current_pwd;}
 	void set_pwd(char* new_pwd); // need to implement this method
 	char* get_last_pwd(){return last_pwd;}
 	//char* get_history(){return history;}
 	void print_history();
-	void add_to_history(char* cmdString);
+	void add_to_history(string cmdString);
 	void print_bg_job(); // need to implement this method
 	string get_job_name(int job_index);// need to implement this method: go over the list with the iterator <job_index> times and return the relevant's name
 	int move_to_fg(int job_index_to_fg);// need to implement this method: move that job to fg_job, get this job's pid and use waitpid on it, return the wait's return value. when the job terminates, put NULL in fg_job;
@@ -64,14 +64,19 @@ public:
 	void delete_fg_job(){delete fg_job;}
 	void add_job_to_fg(pid_t pid_, time_t time_, string name_){fg_job =new job(pid_,time_,name_);}
 	job* get_fg_job(){return fg_job;}
+	void quit(){quit_ = true;}
+	bool is_quit(){return quit_;}
 
 private:
-	bool quit;
-	char* current_pwd[MAX_LINE_SIZE];
-	char* last_pwd[MAX_LINE_SIZE];
-	list<char*> history;
+	bool quit_;
+	char* current_pwd;
+	char* last_pwd;
+	list<string> history;
 	list<job*> bg_jobs;
 	job* fg_job;
-	
+
 };
 #endif
+
+
+
