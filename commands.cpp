@@ -1,32 +1,37 @@
-//		commands.c
-//********************************************
+/*
+ * commands.cpp
+ *
+ *  Created on: Nov 27, 2018
+ *      Author: os
+ */
+
 #include "commands.h"
 //********************************************
 // function name: ExeCmd
-// Description: interperts and executes built-in commands
+// Description: interprets and executes built-in commands
 // Parameters: pointer to jobs, command string
 // Returns: 0 - success,1 - failure
 //**************************************************************************************
 //im here
 int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 {
-	char* cmd; 
+	char* cmd;
 	//char* cmdString;
 	char* args[MAX_ARG];
 	char pwd[MAX_LINE_SIZE];
-	char* delimiters = " \t\n";  
+	char* delimiters = " \t\n";
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
     cmd = strtok(lineSize, delimiters);
 	if (cmd == NULL)
-		return 0; 
+		return 0;
    	args[0] = cmd;
 	for (i=1; i<MAX_ARG; i++)
 	{
-		args[i] = strtok(NULL, delimiters); 
-		if (args[i] != NULL) 
-			num_arg++; 
- 
+		args[i] = strtok(NULL, delimiters);
+		if (args[i] != NULL)
+			num_arg++;
+
 	}
 	p_smash->add_to_history(cmdString);
 
@@ -36,29 +41,34 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 // ARE IN THIS CHAIN OF IF COMMANDS. PLEASE ADD
 // MORE IF STATEMENTS AS REQUIRED
 /*************************************************/
-	if (!strcmp(cmd, "cd") ) 
+	if (!strcmp(cmd, "cd") )
 	{
+		cout << "trying cd "<< num_arg << endl;
 		if(num_arg == 1){
 			if(!strcmp(args[1],"-")){
+				cout << "trying cd"<< endl;
 				if(chdir(p_smash->get_last_pwd())){
-					cerr << args[1] <<" - path not found" << endl; 
+					cout << "path not found"<< endl;
+					//cerr << args[1] <<" - path not found" << endl;
 					return 1;
 				}
 				return 0;
 			}
+			cout << "still trying cd"<< endl;
 			p_smash->set_pwd(getcwd(pwd, MAX_LINE_SIZE));
 			if(chdir(args[1])){
-				cerr << args[1] <<" - path not found" << endl; 
+				cout << "path not found"<< endl;
+				//cerr << args[1] <<" - path not found" << endl;
 				return 1;
 			}
 			p_smash->set_pwd(getcwd(pwd, MAX_LINE_SIZE));
 			return 0;
 		}
 		illegal_cmd = true;
-	} 
-	
+	}
+
 	/*************************************************/
-	else if (!strcmp(cmd, "pwd")) 
+	else if (!strcmp(cmd, "pwd"))
 	{
 		if(num_arg == 0){
 			getcwd(pwd, MAX_LINE_SIZE);
@@ -66,8 +76,10 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 				cerr << "could not find pwd!"<< endl;
 				return 1;
 			}
-			p_smash->set_pwd(pwd);
 			cout << pwd << endl;
+			//cout<< "in pwd"<<endl;
+			//p_smash->set_pwd(pwd);
+
 			return 0;
 		}
 		illegal_cmd = true;
@@ -94,31 +106,31 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
  		illegal_cmd=true;
 	}
 	/*************************************************/
-	
-	else if (!strcmp(cmd, "jobs")) 
+
+	else if (!strcmp(cmd, "jobs"))
 	{
 		if(num_arg == 0){
 			p_smash->print_bg_job();
 			return 0;
-		}		
+		}
  		illegal_cmd = true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "showpid")) 
+	else if (!strcmp(cmd, "showpid"))
 	{
 		if(num_arg == 0){
-			cout << p_smash->get_pid << endl;
+			cout << (int)p_smash->get_pid() << endl;
 			return 0;
 		}
 		illegal_cmd = true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "fg")) 
+	else if (!strcmp(cmd, "fg"))
 	{
 		if(num_arg == 1){
-			string job_name = p_smash -> get_job_name(args[1]);
+			string job_name = p_smash -> get_job_name(atoi(args[1]));
 			cout << job_name << endl;
-			if (p_smash -> move_to_fg(args[1]))
+			if (p_smash -> move_to_fg(atoi(args[1])))
 				return 0;
 			cerr << "could not move to fg" << endl;
 			return 1;
@@ -128,16 +140,16 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 				return 0;
 			cerr << "could not move to fg" << endl;
 			return 1;
-		}                        
+		}
 		illegal_cmd = true;
-	} 
+	}
 	/*************************************************/
-	else if (!strcmp(cmd, "bg")) 
+	else if (!strcmp(cmd, "bg"))
 	{
   		if(num_arg == 1){
-			string job_name = p_smash -> get_job_name((int)args[1]);
+			string job_name = p_smash -> get_job_name(atoi(args[1]));
 			cout << job_name << endl;
-			if (p_smash -> move_to_bg((int)args[1]))
+			if (p_smash -> move_to_bg(atoi(args[1])))
 				return 0;
 			cerr << "could not move to fg" << endl;
 			return 1;
@@ -147,7 +159,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 				return 0;
 			cerr << "could not move to fg" << endl;
 			return 1;
-		}                        
+		}
 		illegal_cmd = true;
 	}
 	/*************************************************/
@@ -155,15 +167,14 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	{
    		if(num_arg == 1 && (!strcmp(args[1],"kill"))){
    			p_smash -> kill_all_jobs();
-   			p_smash-> quit = true;
+   			p_smash-> quit();
    			return 0;
    		}
    		if(num_arg == 0){
-   			p_smash-> quit = true;
    			return 0;
    		}
    		illegal_cmd = true;
-	} 
+	}
 	/*************************************************/
 	else // external command
 	{
@@ -186,9 +197,9 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
 {
 	int pID;
-    switch(pID = fork()) 
+    switch(pID = fork())
 	{
-    		case -1: 
+    		case -1:
 					cerr << "Fork returned error!" << endl;
 					exit(1);
 					break;
@@ -201,10 +212,10 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
 					}
 					break;
 			default:
-				p_smash -> add_new_fg_job(pID, time(NULL), args[0]);
+				p_smash -> add_job_to_fg(pID, time(NULL), args[0]);
 				waitpid(pID, NULL, WUNTRACED);
 	            p_smash -> delete_fg_job();
-					
+
 	}
 }
 //**************************************************************************************
@@ -215,13 +226,14 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
 //**************************************************************************************
 int ExeComp(char* lineSize)
 {
+
 	char ExtCmd[MAX_LINE_SIZE+2];
 	char *args[MAX_ARG];
     if ((strstr(lineSize, "|")) || (strstr(lineSize, "<")) || (strstr(lineSize, ">")) || (strstr(lineSize, "*")) || (strstr(lineSize, "?")) || (strstr(lineSize, ">>")) || (strstr(lineSize, "|&")))
     {
     	cout<<"This is a complex command"<<endl;
 		return 0;
-	} 
+	}
 	return -1;
 }
 //**************************************************************************************
@@ -236,26 +248,26 @@ int BgCmd(char* lineSize, smash_data* p_smash) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	char* Command;
 	char* delimiters = " \t\n";
 	char *args[MAX_ARG];
-	int num_arg=0
-	cmd = strtok(lineSize, delimiters);
+	int num_arg=0;
+	char* cmd = strtok(lineSize, delimiters);
 	if (cmd == NULL)
-		return 0; 
+		return 0;
    	args[0] = cmd;
 	for (int i=1; i<MAX_ARG; i++)
 	{
-		char* arg = strtok(NULL, delimiters); 
-		if (arg != NULL && arg != '&')
+		char* arg = strtok(NULL, delimiters);
+		if (arg != NULL && strcmp(arg,"&"))
 		{
 			args[i] = arg;
 			num_arg++;
-		} 
+		}
 	}
 	if (lineSize[strlen(lineSize)-2] == '&')
 	{
 		int pID;
-	    switch(pID = fork()) 
+	    switch(pID = fork())
 		{
-	    		case -1: 
+	    		case -1:
 						cerr << "Fork returned error!" << endl;
 						exit(1);
 						break;
@@ -263,16 +275,17 @@ int BgCmd(char* lineSize, smash_data* p_smash) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	                	// Child Process
 	               		setpgrp();
 						if(execvp(args[0], args) == -1){
-							cerr << "error while executing" << cmdString << endl;
+							cerr << "error while executing" << lineSize << endl;
 							exit(1);
 						}
 						break;
 				default:
 					p_smash -> add_new_bg_job(pID, time(NULL), args[0]);
 		            p_smash -> delete_fg_job();
-						
+
 		}
 	}
 	return -1;
 }
+
 

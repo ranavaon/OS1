@@ -1,3 +1,10 @@
+/*
+ * signals.cpp
+ *
+ *  Created on: Nov 27, 2018
+ *      Author: os
+ */
+
 // signals.c
 // contains signal handler funtions
 // contains the function/s that set the signal handlers
@@ -7,7 +14,7 @@
    Synopsis: handle the Control-C */
 #include "signals.h"
 
-void sigHandler(int signal)
+/*void sigHandler(int signal)
 {
 	int pid;
 	job* pjob;
@@ -55,4 +62,6 @@ void sigHandler(int signal)
 		break;
 	}
 }
+*/
+
 
