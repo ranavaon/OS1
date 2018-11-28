@@ -34,7 +34,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		}
 
 	}
-	p_smash->add_to_history(cmdString);
+	
 
 
 /*************************************************/
@@ -44,6 +44,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 /*************************************************/
 	if (!strcmp(cmd, "cd") )
 	{
+		p_smash->add_to_history(cmdString);
 		cout << "trying cd "<< num_arg << endl;
 		if(num_arg == 1){
 			if(!strcmp(args[1],"-")){
@@ -72,7 +73,8 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 
 	/*************************************************/
 	else if (!strcmp(cmd, "pwd"))
-	{
+	{	
+		p_smash->add_to_history(cmdString);
 		if(num_arg == 0){
 			getcwd(pwd, MAX_LINE_SIZE);
 			if(pwd == NULL){
@@ -92,6 +94,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	{
 		if (num_arg==0){
 			p_smash->print_history();
+			p_smash->add_to_history(cmdString);
 			return 0;
 		}
 		illegal_cmd=true;
@@ -99,7 +102,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	/*************************************************/
 	else if (!strcmp(cmd, "mv")) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! implement this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	{
-
+		p_smash->add_to_history(cmdString);
  		if(num_arg==2)
  		{
  			if(renameat(AT_FDCWD,args[1],AT_FDCWD,args[2])){
@@ -114,6 +117,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 
 	else if (!strcmp(cmd, "jobs"))
 	{
+		p_smash->add_to_history(cmdString);
 		if(num_arg == 0){
 			p_smash->print_bg_job();
 			return 0;
@@ -123,6 +127,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	/*************************************************/
 	else if (!strcmp(cmd, "showpid"))
 	{
+		p_smash->add_to_history(cmdString);
 		if(num_arg == 0){
 			cout << (int)p_smash->get_pid() << endl;
 			return 0;
@@ -132,6 +137,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	/*************************************************/
 	else if (!strcmp(cmd, "fg"))
 	{
+		p_smash->add_to_history(cmdString);
 		if(num_arg == 1){
 			string job_name = p_smash -> get_job_name(atoi(args[1]));
 			cout << job_name << endl;
@@ -151,6 +157,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	/*************************************************/
 	else if (!strcmp(cmd, "bg"))
 	{
+		p_smash->add_to_history(cmdString);
   		if(num_arg == 1){
 			string job_name = p_smash -> get_job_name(atoi(args[1]));
 			cout << job_name << endl;
@@ -170,6 +177,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
+		p_smash->add_to_history(cmdString);
    		if(num_arg == 1 && (!strcmp(args[1],"kill"))){
    			p_smash -> kill_all_jobs();
    			p_smash-> quit();
@@ -184,6 +192,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	/*************************************************/
 	else // external command
 	{
+		p_smash->add_to_history(cmdString);
  		ExeExternal(args, cmdString,p_smash);
 	 	return 0;
 	}
