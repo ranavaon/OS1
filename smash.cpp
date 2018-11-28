@@ -22,6 +22,7 @@
 char* L_Fg_Cmd;
 void* jobs = NULL; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
 char lineSize[MAX_LINE_SIZE];
+smash_data* p_smash =NULL;
 //**************************************************************************************
 // function name: main
 // Description: main function of smash. get command from user and calls command functions
@@ -29,8 +30,9 @@ char lineSize[MAX_LINE_SIZE];
 int main(int argc, char *argv[])
 {
 
-
-
+	signal(SIGTSTP,sigHandler);
+	signal(SIGINT,sigHandler);
+	signal(SIGCHLD,sigHandler);
 	//signal declarations
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
 	 /* add your code here */
@@ -44,8 +46,10 @@ int main(int argc, char *argv[])
 
 	/************************************/
 	// Init globals
-	smash_data my_smash(getpid(),time(NULL));// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!put as an argument this process's PID!!!!!!!!!!!!!!!!!!!!!!!!!!
-    char cmdString[MAX_LINE_SIZE];
+	char pwd_[MAX_LINE_SIZE];
+	smash_data my_smash(getpid(),time(NULL),getcwd(pwd_, MAX_LINE_SIZE));// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!put as an argument this process's PID!!!!!!!!!!!!!!!!!!!!!!!!!!
+	p_smash = &my_smash;
+	char cmdString[MAX_LINE_SIZE];
 
 
 	L_Fg_Cmd =(char*)malloc(sizeof(char)*(MAX_LINE_SIZE+1));

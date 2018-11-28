@@ -22,15 +22,16 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	char* delimiters = " \t\n";
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
-    cmd = strtok(lineSize, delimiters);
+    cmd = strtok(cmdString, delimiters);
 	if (cmd == NULL)
 		return 0;
-   	args[0] = cmd;
 	for (i=1; i<MAX_ARG; i++)
 	{
 		args[i] = strtok(NULL, delimiters);
-		if (args[i] != NULL)
+		if (args[i] != NULL){
+			cout << args[i];
 			num_arg++;
+		}
 
 	}
 	p_smash->add_to_history(cmdString);
@@ -47,15 +48,17 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		if(num_arg == 1){
 			if(!strcmp(args[1],"-")){
 				cout << "trying cd"<< endl;
-				if(chdir(p_smash->get_last_pwd())){
+				if(chdir((p_smash->get_last_pwd()).c_str())){
 					cout << "path not found"<< endl;
 					//cerr << args[1] <<" - path not found" << endl;
 					return 1;
 				}
+				p_smash->set_pwd(getcwd(pwd, MAX_LINE_SIZE));
+				cout << "pwd set!"<< endl;
 				return 0;
 			}
 			cout << "still trying cd"<< endl;
-			p_smash->set_pwd(getcwd(pwd, MAX_LINE_SIZE));
+
 			if(chdir(args[1])){
 				cout << "path not found"<< endl;
 				//cerr << args[1] <<" - path not found" << endl;
@@ -171,6 +174,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
    			return 0;
    		}
    		if(num_arg == 0){
+   			p_smash-> quit();
    			return 0;
    		}
    		illegal_cmd = true;

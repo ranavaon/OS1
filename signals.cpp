@@ -14,7 +14,7 @@
    Synopsis: handle the Control-C */
 #include "signals.h"
 
-/*void sigHandler(int signal)
+void sigHandler(int signal)
 {
 	int pid;
 	job* pjob;
@@ -62,6 +62,6 @@
 		break;
 	}
 }
-*/
+
 
 

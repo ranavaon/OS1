@@ -15,21 +15,25 @@
 	}
 
 	void smash_data::set_pwd(char* new_pwd){
-		const char* pwd_temp = (this-> current_pwd);
+		this->last_pwd = this->current_pwd;
+		this->current_pwd = new_pwd;
+		/*const char* pwd_temp = (this-> current_pwd);
 		const char* new_pwd_const = new_pwd;
-		//cout<< new_pwd_const<< endl;
+		cout << new_pwd<< endl;
+		cout<< "in set pwd"<< endl;
 		//cout<< pwd_temp<< endl;
 		strcpy(this->last_pwd, pwd_temp);
-		strcpy(this->current_pwd, new_pwd_const);
-	} // need to implement this method
+		cout<< "in set pwd2"<< endl;
+		strcpy(this->current_pwd, new_pwd_const);*/
+	}
 
 	void smash_data::print_history()
 	{
-		for(list<char*>::iterator iter = this->history.begin(); iter != this->history.end(); iter++){
+		for(list<string>::iterator iter = this->history.begin(); iter != this->history.end(); iter++){
 		   cout<<*iter<<endl;
 		}
 	}
-	void smash_data::add_to_history(char* cmdString){
+	void smash_data::add_to_history(string cmdString){
 		if (this->history.size()>=MAX_HISTORY){
 				this->history.pop_back();
 			}

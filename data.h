@@ -46,14 +46,14 @@ private:
 
 class smash_data: public job{
 public:
-	smash_data(pid_t smash_pid, time_t time):job(smash_pid,time,"smash"), quit_(false),current_pwd(NULL),last_pwd(NULL){bg_jobs.push_front(this),fg_job=NULL;
+	smash_data(pid_t smash_pid, time_t time,string current_pwd_):job(smash_pid,time,"smash"), quit_(false),current_pwd(current_pwd_){bg_jobs.push_front(this),fg_job=NULL; // ,current_pwd(NULL),last_pwd(NULL)
 	}// check how to get time stamp!
-	char* get_current_pwd(){return current_pwd;}
+	string get_current_pwd(){return current_pwd;}
 	void set_pwd(char* new_pwd); // need to implement this method
-	char* get_last_pwd(){return last_pwd;}
+	string get_last_pwd(){return last_pwd;}
 	//char* get_history(){return history;}
 	void print_history();
-	void add_to_history(char* cmdString);
+	void add_to_history(string cmdString);
 	void print_bg_job(); // need to implement this method
 	string get_job_name(int job_index);// need to implement this method: go over the list with the iterator <job_index> times and return the relevant's name
 	int move_to_fg(int job_index_to_fg);// need to implement this method: move that job to fg_job, get this job's pid and use waitpid on it, return the wait's return value. when the job terminates, put NULL in fg_job;
@@ -69,9 +69,9 @@ public:
 
 private:
 	bool quit_;
-	char* current_pwd;
-	char* last_pwd;
-	list<char*> history;
+	string current_pwd;
+	string last_pwd;
+	list<string> history;
 	list<job*> bg_jobs;
 	job* fg_job;
 
