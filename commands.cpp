@@ -29,7 +29,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	{
 		args[i] = strtok(NULL, delimiters);
 		if (args[i] != NULL){
-			cout << args[i];
+			//cout << args[i];
 			num_arg++;
 		}
 
@@ -47,21 +47,21 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		cout << "trying cd "<< num_arg << endl;
 		if(num_arg == 1){
 			if(!strcmp(args[1],"-")){
-				cout << "trying cd"<< endl;
+				//cout << "trying cd"<< endl;
 				if(chdir((p_smash->get_last_pwd()).c_str())){
-					cout << "path not found"<< endl;
-					//cerr << args[1] <<" - path not found" << endl;
+					//cout << "path not found"<< endl;
+					cerr << args[1] <<" - path not found" << endl;
 					return 1;
 				}
 				p_smash->set_pwd(getcwd(pwd, MAX_LINE_SIZE));
-				cout << "pwd set!"<< endl;
+				//cout << "pwd set!"<< endl;
 				return 0;
 			}
-			cout << "still trying cd"<< endl;
+			//cout << "still trying cd"<< endl;
 
 			if(chdir(args[1])){
-				cout << "path not found"<< endl;
-				//cerr << args[1] <<" - path not found" << endl;
+				//cout << "path not found"<< endl;
+				cerr << args[1] <<" - path not found" << endl;
 				return 1;
 			}
 			p_smash->set_pwd(getcwd(pwd, MAX_LINE_SIZE));
@@ -102,7 +102,9 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 
  		if(num_arg==2)
  		{
+ 			if(renameat(AT_FDCWD,args[1],AT_FDCWD,args[2])){
 
+ 			}
 
  			return 0;
  		}
@@ -209,16 +211,23 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
 					break;
         	case 0 :
                 	// Child Process
+        			cout<< "in child" <<endl;
                		setpgrp();
+               		cout<< "still in child" <<endl;
 					if(execvp(args[0], args) == -1){
+						cout<< "err" <<endl;
 						cerr << "error while executing" << cmdString << endl;
 						exit(1);
 					}
-					break;
+					cout<< "still in child1" <<endl;
+					break;// how does the child "kills " himself ?
 			default:
+				cout<< "child pid: "<<pID <<endl;
 				p_smash -> add_job_to_fg(pID, time(NULL), args[0]);
 				waitpid(pID, NULL, WUNTRACED);
+				cout<< "child ended "<<pID <<endl;
 	            p_smash -> delete_fg_job();
+	            cout<< "child job deleted "<<pID <<endl;
 
 	}
 }
@@ -248,26 +257,35 @@ int ExeComp(char* lineSize)
 //**************************************************************************************
 int BgCmd(char* lineSize, smash_data* p_smash) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! implement this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 {
-
-	char* Command;
+	//cout<< "in bgcmd, line:"<< lineSize << endl;
+	bool is_bg = false;
+	char* Command ;
 	char* delimiters = " \t\n";
 	char *args[MAX_ARG];
 	int num_arg=0;
 	char* cmd = strtok(lineSize, delimiters);
+	//cout << "cmd: " << cmd << endl;
 	if (cmd == NULL)
 		return 0;
    	args[0] = cmd;
 	for (int i=1; i<MAX_ARG; i++)
 	{
 		char* arg = strtok(NULL, delimiters);
-		if (arg != NULL && strcmp(arg,"&"))
+		if (arg != NULL)
 		{
-			args[i] = arg;
-			num_arg++;
+			//cout << "arg in parse loop: " << arg<< endl;
+			if(!strcmp(arg,"&")){
+				is_bg = true;
+			}
+			else{
+				args[i] = arg;
+				num_arg++;
+			}
 		}
 	}
-	if (lineSize[strlen(lineSize)-2] == '&')
+	if (is_bg)
 	{
+		//cout << "its a bg!" << endl;
 		int pID;
 	    switch(pID = fork())
 		{
@@ -277,15 +295,18 @@ int BgCmd(char* lineSize, smash_data* p_smash) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 						break;
 	        	case 0 :
 	                	// Child Process
+	        			//cout << "bg child"<< endl;
 	               		setpgrp();
 						if(execvp(args[0], args) == -1){
 							cerr << "error while executing" << lineSize << endl;
 							exit(1);
 						}
-						break;
+						//p_smash -> delete_bg_job(args[0]); --- make sure this is functioning with cmd!
+						break;// what happens when the child gets here?
 				default:
 					p_smash -> add_new_bg_job(pID, time(NULL), args[0]);
 		            p_smash -> delete_fg_job();
+		            return 0;
 
 		}
 	}

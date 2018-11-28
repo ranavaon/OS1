@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
 	char pwd_[MAX_LINE_SIZE];
 	smash_data my_smash(getpid(),time(NULL),getcwd(pwd_, MAX_LINE_SIZE));// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!put as an argument this process's PID!!!!!!!!!!!!!!!!!!!!!!!!!!
 	p_smash = &my_smash;
-	char cmdString[MAX_LINE_SIZE];
+	char cmdString_Bg[MAX_LINE_SIZE];
+	char cmdString_Exe[MAX_LINE_SIZE];
 
 
 	L_Fg_Cmd =(char*)malloc(sizeof(char)*(MAX_LINE_SIZE+1));
@@ -61,18 +62,20 @@ int main(int argc, char *argv[])
     {
 	 	cout << "smash > ";
 		fgets(lineSize, MAX_LINE_SIZE, stdin);
-		strcpy(cmdString, lineSize);
-		cmdString[strlen(lineSize)-1]='\0';
+		strcpy(cmdString_Bg, lineSize);
+		cmdString_Bg[strlen(lineSize)-1]='\0';
+		strcpy(cmdString_Exe, cmdString_Bg);
 					// perform a complicated Command
 		if(!ExeComp(lineSize)) continue;
 					// background command
-	 	if(!BgCmd(lineSize, &my_smash)) continue;
+	 	if(!BgCmd(cmdString_Bg, &my_smash)) continue;
 					// built in commands
-		ExeCmd(lineSize, cmdString, &my_smash);
+		ExeCmd(lineSize, cmdString_Exe, &my_smash);
 
 		/* initialize for next line read*/
 		lineSize[0]='\0';
-		cmdString[0]='\0';
+		cmdString_Bg[0]='\0';
+		cmdString_Exe[0]='\0';
 	}
     return 0;
 }
