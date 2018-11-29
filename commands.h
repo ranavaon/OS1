@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include "data.h"
 #include "signals.h"
+#include <fcntl.h> /* Definition of AT_* constants */
 
 #define MAX_PROCESSES 100
 #define MAX_LINE_SIZE 80

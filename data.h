@@ -46,11 +46,11 @@ private:
 
 class smash_data: public job{
 public:
-	smash_data(pid_t smash_pid, time_t time):job(smash_pid,time,"smash"), quit_(false),current_pwd(NULL),last_pwd(NULL){bg_jobs.push_front(this),fg_job=NULL;
+	smash_data(pid_t smash_pid, time_t time,string current_pwd_):job(smash_pid,time,"smash"), quit_(false),current_pwd(current_pwd_){bg_jobs.push_front(this),fg_job=NULL; // ,current_pwd(NULL),last_pwd(NULL)
 	}// check how to get time stamp!
-	char* get_current_pwd(){return current_pwd;}
+	string get_current_pwd(){return current_pwd;}
 	void set_pwd(char* new_pwd); // need to implement this method
-	char* get_last_pwd(){return last_pwd;}
+	string get_last_pwd(){return last_pwd;}
 	//char* get_history(){return history;}
 	void print_history();
 	void add_to_history(string cmdString);
@@ -63,14 +63,15 @@ public:
 	void delete_bg_job(int job_index);
 	void delete_fg_job(){delete fg_job;}
 	void add_job_to_fg(pid_t pid_, time_t time_, string name_){fg_job =new job(pid_,time_,name_);}
+	void add_job_to_bg(job* fg){bg_jobs.push_front(fg);}
 	job* get_fg_job(){return fg_job;}
 	void quit(){quit_ = true;}
 	bool is_quit(){return quit_;}
 
 private:
 	bool quit_;
-	char* current_pwd;
-	char* last_pwd;
+	string current_pwd;
+	string last_pwd;
 	list<string> history;
 	list<job*> bg_jobs;
 	job* fg_job;

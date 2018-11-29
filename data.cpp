@@ -15,13 +15,17 @@
 	}
 
 	void smash_data::set_pwd(char* new_pwd){
-		const char* pwd_temp = (this-> current_pwd);
+		this->last_pwd = this->current_pwd;
+		this->current_pwd = new_pwd;
+		/*const char* pwd_temp = (this-> current_pwd);
 		const char* new_pwd_const = new_pwd;
-		//cout<< new_pwd_const<< endl;
+		cout << new_pwd<< endl;
+		cout<< "in set pwd"<< endl;
 		//cout<< pwd_temp<< endl;
 		strcpy(this->last_pwd, pwd_temp);
-		strcpy(this->current_pwd, new_pwd_const);
-	} // need to implement this method
+		cout<< "in set pwd2"<< endl;
+		strcpy(this->current_pwd, new_pwd_const);*/
+	}
 
 	void smash_data::print_history()
 	{
@@ -33,7 +37,7 @@
 		if (this->history.size()>=MAX_HISTORY){
 				this->history.pop_back();
 			}
-			this->history.push_front(cmdString);
+			this->history.push_back(cmdString);
 	}
 	void smash_data::print_bg_job(){
 		int i=1;
@@ -88,12 +92,14 @@
 		if(job_index_to_bg == 0){// case no job id mentioned
 			list<job*>::iterator job_to_bg = this->bg_jobs.begin();
 			for(list<job*>::iterator iter = job_to_bg; iter != bg_jobs.end(); iter++){
+
 				if((*iter)->get_state() == SUSPENDED){
 					job_to_bg = iter;
 				}
 			}
 			if((*job_to_bg != NULL) && ((job_to_bg != bg_jobs.begin())||((*job_to_bg)->get_state() == SUSPENDED))){// means there is a suspended job
 				cout << "signal SIGCONT was sent to pid " << (*job_to_bg)->get_pid() << endl;
+				cout<<"here"<<endl;
 				(*job_to_bg)->set_state(RUNNING);
 				kill((*job_to_bg)->get_pid(), SIGCONT);
 				return 0;
