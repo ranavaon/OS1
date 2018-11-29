@@ -37,7 +37,7 @@
 		if (this->history.size()>=MAX_HISTORY){
 				this->history.pop_back();
 			}
-			this->history.push_front(cmdString);
+			this->history.push_back(cmdString);
 	}
 	void smash_data::print_bg_job(){
 		int i=1;
