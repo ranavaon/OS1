@@ -90,13 +90,13 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		illegal_cmd=true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "mv")) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! implement this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	else if (!strcmp(cmd, "mv")) //working
 	{
 		p_smash->add_to_history(cmdString);
  		if(num_arg==2)
  		{
- 			if(renameat(AT_FDCWD,args[1],AT_FDCWD,args[2])){
-
+ 			if(!renameat(AT_FDCWD,args[1],AT_FDCWD,args[2])){
+ 				cout<<args[1]<<" has been renamed to "<<args[2]<<endl;
  			}
 
  			return 0;
@@ -105,7 +105,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	}
 	/*************************************************/
 
-	else if (!strcmp(cmd, "jobs"))
+	else if (!strcmp(cmd, "jobs"))//working. need to be chacked with bg jobs
 	{
 		p_smash->add_to_history(cmdString);
 		if(num_arg == 0){
@@ -167,7 +167,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
-		p_smash->add_to_history(cmdString);
+		p_smash->add_to_history(cmdString);//segmentation fault
    		if(num_arg == 1 && (!strcmp(args[1],"kill"))){
    			p_smash -> kill_all_jobs();
    			p_smash-> quit();
@@ -186,7 +186,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
  		ExeExternal(args, cmdString,p_smash);
 	 	return 0;
 	}
-	if (illegal_cmd == true)
+	if (illegal_cmd == true)//working
 	{
 		cerr << "smash error: > \"" << cmdString <<"\"" << endl;
 		return 1;
@@ -199,7 +199,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
+void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)//fg commandes. working-but not killing childes yet
 {
 	int pID;
 	string fg;
@@ -216,7 +216,7 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
                		cout<< "still in child" <<endl;
 					if(execvp(args[0], args) == -1){
 						cout<< "err" <<endl;
-						cerr << "error while executing" << cmdString << endl;
+						cerr << "error while executing " << cmdString << endl;
 						exit(1);
 					}
 					cout<< "still in child1" <<endl;
@@ -227,7 +227,8 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
 				p_smash -> add_job_to_fg(pID, time(NULL), fg );
 				waitpid(pID, NULL, WUNTRACED);
 				cout<< "child ended "<<pID <<endl;
-	            p_smash -> delete_fg_job();
+	            if (p_smash->get_fg_job()!=NULL)
+	            	{p_smash -> delete_fg_job();}
 	            cout<< "child job deleted "<<pID <<endl;
 
 	}
@@ -241,8 +242,8 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
 int ExeComp(char* lineSize)
 {
 
-	char ExtCmd[MAX_LINE_SIZE+2];
-	char *args[MAX_ARG];
+	//char ExtCmd[MAX_LINE_SIZE+2];
+	//char *args[MAX_ARG];
     if ((strstr(lineSize, "|")) || (strstr(lineSize, "<")) || (strstr(lineSize, ">")) || (strstr(lineSize, "*")) || (strstr(lineSize, "?")) || (strstr(lineSize, ">>")) || (strstr(lineSize, "|&")))
     {
     	cout<<"This is a complex command"<<endl;
@@ -256,7 +257,7 @@ int ExeComp(char* lineSize)
 // Parameters: command string, pointer to jobs
 // Returns: 0- BG command -1- if not
 //**************************************************************************************
-int BgCmd(char* lineSize, smash_data* p_smash) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! implement this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+int BgCmd(char* lineSize, smash_data* p_smash) // working
 {
 	//cout<< "in bgcmd, line:"<< lineSize << endl;
 	bool is_bg = false;
@@ -299,14 +300,14 @@ int BgCmd(char* lineSize, smash_data* p_smash) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	        			//cout << "bg child"<< endl;
 	               		setpgrp();
 						if(execvp(args[0], args) == -1){
-							cerr << "error while executing" << lineSize << endl;
+							cerr << "1 error while executing " << lineSize << endl;
 							exit(0);
 						}
 						//p_smash -> delete_bg_job(args[0]); --- make sure this is functioning with cmd!
 						break;// what happens when the child gets here?
 				default:
 					p_smash -> add_new_bg_job(pID, time(NULL), args[0]);
-		            p_smash -> delete_fg_job();
+		            //p_smash -> delete_fg_job();
 		            return 0;
 
 		}

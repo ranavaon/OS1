@@ -92,12 +92,14 @@
 		if(job_index_to_bg == 0){// case no job id mentioned
 			list<job*>::iterator job_to_bg = this->bg_jobs.begin();
 			for(list<job*>::iterator iter = job_to_bg; iter != bg_jobs.end(); iter++){
+
 				if((*iter)->get_state() == SUSPENDED){
 					job_to_bg = iter;
 				}
 			}
 			if((*job_to_bg != NULL) && ((job_to_bg != bg_jobs.begin())||((*job_to_bg)->get_state() == SUSPENDED))){// means there is a suspended job
 				cout << "signal SIGCONT was sent to pid " << (*job_to_bg)->get_pid() << endl;
+				cout<<"here"<<endl;
 				(*job_to_bg)->set_state(RUNNING);
 				kill((*job_to_bg)->get_pid(), SIGCONT);
 				return 0;
@@ -121,11 +123,16 @@
 	}
 
 
-	void smash_data::delete_bg_job(int job_index){
+	void smash_data::delete_bg_job(pid_t pid){
 		list<job*>::iterator job_to_delete = this->bg_jobs.begin();
-		for(int i=0; i<job_index; i++){
+		/*for(int i=0; i<job_index; i++){
 			job_to_delete++;
-		}
+		}*/
+		for(list<job*>::iterator iter = this->bg_jobs.begin(); iter != bg_jobs.end(); iter++){
+			if ( (*iter)->get_pid()== pid){
+				job_to_delete=iter;
+			}
+			}
 		bg_jobs.erase(job_to_delete);
 	}
 
@@ -134,7 +141,7 @@
 
 	void smash_data::kill_all_jobs(){
 		int i = 1;
-		for(list<job*>::iterator iter = bg_jobs.begin(); iter != bg_jobs.end(); iter++){
+		for(list<job*>::iterator iter = this->bg_jobs.begin(); iter != bg_jobs.end(); iter++){
 			cout << "[" << i << "] " << (*iter)->get_name() << " - Sending SIGTERM... ";
 			int start = (int)time(NULL);
 			kill((*iter)->get_pid(), SIGCONT);
@@ -149,3 +156,10 @@
 			i++;
 		}
 	}
+	/*int smash_data::find_bg_job(pid_t pid){
+		for(list<job*>::iterator iter = this->bg_jobs.begin(); iter != bg_jobs.end(); iter++){
+			if ( (*iter)->get_pid()== pid)
+				return
+		}
+
+	}*/
