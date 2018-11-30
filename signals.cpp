@@ -16,7 +16,7 @@
 
 void sigHandler(int signal)//not working good yet
 {
-	int pid;
+	pid_t pid;
 	job* pjob;
 	switch(signal)
 	{
@@ -52,11 +52,14 @@ void sigHandler(int signal)//not working good yet
 			p_smash->delete_fg_job();
 		break;
 
-		case SIGCHLD:
-		pid = waitpid(-1,NULL,WNOHANG);//find the zombie proccess
-		if(pid > 0)
+		case SIGCHLD://not kiiling childes yet
+		pid=1;
+		while (pid > 0)
 		{
-				//need to be fixed- how to find the zombie index and delet it
+			pid = waitpid(-1,NULL,WNOHANG);//find the zombie proccess
+			if (pid<=0)
+				return;
+			p_smash->delete_bg_job(pid);
 		}
 		break;
 		default:

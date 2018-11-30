@@ -123,11 +123,16 @@
 	}
 
 
-	void smash_data::delete_bg_job(int job_index){
+	void smash_data::delete_bg_job(pid_t pid){
 		list<job*>::iterator job_to_delete = this->bg_jobs.begin();
-		for(int i=0; i<job_index; i++){
+		/*for(int i=0; i<job_index; i++){
 			job_to_delete++;
-		}
+		}*/
+		for(list<job*>::iterator iter = this->bg_jobs.begin(); iter != bg_jobs.end(); iter++){
+			if ( (*iter)->get_pid()== pid){
+				job_to_delete=iter;
+			}
+			}
 		bg_jobs.erase(job_to_delete);
 	}
 
@@ -136,7 +141,7 @@
 
 	void smash_data::kill_all_jobs(){
 		int i = 1;
-		for(list<job*>::iterator iter = bg_jobs.begin(); iter != bg_jobs.end(); iter++){
+		for(list<job*>::iterator iter = this->bg_jobs.begin(); iter != bg_jobs.end(); iter++){
 			cout << "[" << i << "] " << (*iter)->get_name() << " - Sending SIGTERM... ";
 			int start = (int)time(NULL);
 			kill((*iter)->get_pid(), SIGCONT);
@@ -151,3 +156,10 @@
 			i++;
 		}
 	}
+	/*int smash_data::find_bg_job(pid_t pid){
+		for(list<job*>::iterator iter = this->bg_jobs.begin(); iter != bg_jobs.end(); iter++){
+			if ( (*iter)->get_pid()== pid)
+				return
+		}
+
+	}*/

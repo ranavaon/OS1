@@ -199,7 +199,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)//fg commandes. working-but not killing childe yet
+void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)//fg commandes. working-but not killing childes yet
 {
 	int pID;
 	string fg;
@@ -257,7 +257,7 @@ int ExeComp(char* lineSize)
 // Parameters: command string, pointer to jobs
 // Returns: 0- BG command -1- if not
 //**************************************************************************************
-int BgCmd(char* lineSize, smash_data* p_smash) //not working
+int BgCmd(char* lineSize, smash_data* p_smash) // working
 {
 	//cout<< "in bgcmd, line:"<< lineSize << endl;
 	bool is_bg = false;
@@ -307,7 +307,7 @@ int BgCmd(char* lineSize, smash_data* p_smash) //not working
 						break;// what happens when the child gets here?
 				default:
 					p_smash -> add_new_bg_job(pID, time(NULL), args[0]);
-		            p_smash -> delete_fg_job();
+		            //p_smash -> delete_fg_job();
 		            return 0;
 
 		}
