@@ -29,13 +29,13 @@ void sigHandler(int signal)//not working good yet
 			cerr << "Error sending SIGTSTP signal" << endl;
 			return;
 		}
-		if (p_smash->get_fg_job())// all this part need to be chacked-i'm not sure if move to bg(0) is right
+		if (p_smash->get_fg_job()!=NULL)// all this part need to be chacked-i'm not sure if move to bg(0) is right
 		{
-			//p_smash->lastStoppedJobNum = p_smash->getFgJob()->getJobNum();
 			p_smash->get_fg_job()->set_state(SUSPENDED);
 			p_smash->add_job_to_bg(p_smash->get_fg_job());
-			//p_smash->move_to_bg(0);
-			p_smash->delete_fg_job();
+            if (p_smash->get_fg_job()!=NULL)
+            	{cout<<"here"<<endl;
+            	p_smash -> delete_fg_job();}
 		}
 		break;
 
@@ -57,6 +57,7 @@ void sigHandler(int signal)//not working good yet
 		while (pid > 0)
 		{
 			pid = waitpid(-1,NULL,WNOHANG);//find the zombie proccess
+
 			if (pid<=0)
 				return;
 			p_smash->delete_bg_job(pid);
