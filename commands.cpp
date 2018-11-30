@@ -257,7 +257,7 @@ int ExeComp(char* lineSize)
 // Parameters: command string, pointer to jobs
 // Returns: 0- BG command -1- if not
 //**************************************************************************************
-int BgCmd(char* lineSize, smash_data* p_smash) // working
+int BgCmd(char* lineSize, smash_data* p_smash) // not working
 {
 	//cout<< "in bgcmd, line:"<< lineSize << endl;
 	bool is_bg = false;
