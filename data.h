@@ -63,7 +63,7 @@ public:
 	void add_new_bg_job(pid_t pid_, time_t time_, string name_);
 
 	void delete_bg_job(pid_t pid);
-	void delete_fg_job(){delete fg_job;}
+	void delete_fg_job(){fg_job=NULL;}
 
 	void add_job_to_fg(pid_t pid_, time_t time_, string name_){fg_job =new job(pid_,time_,name_);}
 	void add_job_to_bg(job* fg){bg_jobs.push_front(fg);}
