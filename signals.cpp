@@ -1,7 +1,7 @@
 /*
  * signals.cpp
  *
- *  Created on: Nov 27, 2018
+ *  Created on: Nov 30, 2018
  *      Author: os
  */
 
@@ -14,9 +14,9 @@
    Synopsis: handle the Control-C */
 #include "signals.h"
 
-/*void sigHandler(int signal)
+void sigHandler(int signal)//not working good yet
 {
-	int pid;
+	pid_t pid;
 	job* pjob;
 	switch(signal)
 	{
@@ -29,12 +29,13 @@
 			cerr << "Error sending SIGTSTP signal" << endl;
 			return;
 		}
-		if (p_smash->get_fg_job())// all this part need to be chacked-i'm not sure if move to bg(0) is right
+		if (p_smash->get_fg_job()!=NULL)// all this part need to be chacked-i'm not sure if move to bg(0) is right
 		{
-			//p_smash->lastStoppedJobNum = p_smash->getFgJob()->getJobNum();
 			p_smash->get_fg_job()->set_state(SUSPENDED);
-			p_smash->move_to_bg(0);
-			p_smash->delete_fg_job();
+			p_smash->add_job_to_bg(p_smash->get_fg_job());
+            if (p_smash->get_fg_job()!=NULL)
+            	{cout<<"here"<<endl;
+            	p_smash -> delete_fg_job();}
 		}
 		break;
 
@@ -51,17 +52,21 @@
 			p_smash->delete_fg_job();
 		break;
 
-		case SIGCHLD:
-		pid = waitpid(-1,NULL,WNOHANG);//find the zombie proccess
-		if(pid > 0)
+		case SIGCHLD://not kiiling childes yet
+		pid=1;
+		while (pid > 0)
 		{
-				//need to be fixed- how to find the zombie index and delet it
+			pid = waitpid(-1,NULL,WNOHANG);//find the zombie proccess
+
+			if (pid<=0)
+				return;
+			p_smash->delete_bg_job(pid);
 		}
 		break;
 		default:
 		break;
 	}
 }
-*/
+
 
 

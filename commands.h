@@ -1,3 +1,9 @@
+/*
+ * commands.h
+ *
+ *  Created on: Nov 30, 2018
+ *      Author: os
+ */
 
 #ifndef _COMMANDS_H
 #define _COMMANDS_H
@@ -15,6 +21,7 @@
 #include <sys/wait.h>
 #include "data.h"
 #include "signals.h"
+#include <fcntl.h> /* Definition of AT_* constants */
 
 #define MAX_PROCESSES 100
 #define MAX_LINE_SIZE 80
