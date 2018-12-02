@@ -1,12 +1,9 @@
 /*
  * signals.h
  *
- *  Created on: Nov 27, 2018
+ *  Created on: Nov 30, 2018
  *      Author: os
  */
-
-
-
 #ifndef _SIGS_H
 #define _SIGS_H
 #include <sys/types.h>
@@ -24,3 +21,6 @@ void sigHandler(int signal);
 extern smash_data* p_smash;
 
 #endif
+
+
+
