@@ -54,7 +54,7 @@ private:
 
 class smash_data: public job{
 public:
-	smash_data(pid_t smash_pid, time_t time,string current_pwd_):job(smash_pid,time,"smash"), quit_(false),current_pwd(current_pwd_){bg_jobs.push_front(this),fg_job=NULL; // ,current_pwd(NULL),last_pwd(NULL)
+	smash_data(pid_t smash_pid, time_t time,string current_pwd_):job(smash_pid,time,"smash"), quit_(false),current_pwd(current_pwd_){fg_job=NULL; // ,current_pwd(NULL),last_pwd(NULL)
 	}
 	string get_current_pwd(){return current_pwd;}
 	void set_pwd(char* new_pwd); // need to implement this method

@@ -41,7 +41,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 // ARE IN THIS CHAIN OF IF COMMANDS. PLEASE ADD
 // MORE IF STATEMENTS AS REQUIRED
 /*************************************************/
-	if (!strcmp(cmd, "cd") )//working
+	if (!strcmp(cmd, "cd") )
 	{
 		p_smash->add_to_history(cmdString);
 		cout << "trying cd "<< num_arg << endl;
@@ -65,7 +65,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	}
 
 	/*************************************************/
-	else if (!strcmp(cmd, "pwd")){//working
+	else if (!strcmp(cmd, "pwd")){
 		p_smash->add_to_history(cmdString);
 		if(num_arg == 0){
 			getcwd(pwd, MAX_LINE_SIZE);
@@ -79,7 +79,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		illegal_cmd = true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "history"))//working
+	else if (!strcmp(cmd, "history"))
 	{
 		if (num_arg==0){
 			p_smash->print_history();
@@ -89,7 +89,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		illegal_cmd=true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "mv")) //working
+	else if (!strcmp(cmd, "mv"))
 	{
 		p_smash->add_to_history(cmdString);
  		if(num_arg==2)
@@ -104,7 +104,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 	}
 	/*************************************************/
 
-	else if (!strcmp(cmd, "jobs"))//working
+	else if (!strcmp(cmd, "jobs"))
 	{
 		p_smash->add_to_history(cmdString);
 		if(num_arg == 0){
@@ -114,7 +114,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
  		illegal_cmd = true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "showpid"))//working
+	else if (!strcmp(cmd, "showpid"))
 	{
 		p_smash->add_to_history(cmdString);
 		if(num_arg == 0){
@@ -124,7 +124,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		illegal_cmd = true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "kill"))// check it!
+	else if (!strcmp(cmd, "kill"))
 		{
 			p_smash->add_to_history(cmdString);
 			char *signal_char = strtok(args[1], "-");
@@ -138,9 +138,8 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 			illegal_cmd = true;
 		}
 		/*************************************************/
-	else if (!strcmp(cmd, "fg")) // working
+	else if (!strcmp(cmd, "fg"))
 	{
-		//cout << "moving to fg "<< endl;
 		p_smash->add_to_history(cmdString);
 		if(num_arg == 1){
 			string job_name = p_smash -> get_job_name(atoi(args[1])-1);
@@ -159,7 +158,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		illegal_cmd = true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "bg")) // working
+	else if (!strcmp(cmd, "bg"))
 	{
 		p_smash->add_to_history(cmdString);
   		if(num_arg == 1){
@@ -179,7 +178,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 		illegal_cmd = true;
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "quit")) // working
+	else if (!strcmp(cmd, "quit"))
 	{
 		p_smash->add_to_history(cmdString);
    		if(num_arg == 1 && (!strcmp(args[1],"kill"))){
@@ -187,7 +186,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
    			p_smash-> quit();
    			return 0;
    		}
-   		if(num_arg == 0){//working
+   		if(num_arg == 0){
    			p_smash-> quit();
    			return 0;
    		}
@@ -200,7 +199,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
  		ExeExternal(args, cmdString,p_smash);
 	 	return 0;
 	}
-	if (illegal_cmd == true)//working
+	if (illegal_cmd == true)
 	{
 		cerr << "smash error: > \"" << cmdString <<"\"" << endl;
 		return 1;
@@ -213,7 +212,7 @@ int ExeCmd(char* lineSize, char* cmdString,smash_data* p_smash)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)//fg commandes. working-but not killing childes yet ???
+void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)
 {
 	int pID;
 	string fg;
@@ -225,27 +224,18 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, smash_data* p_smash)//fg 
 					break;
         	case 0 :
                 	// Child Process
-        			//cout<< "in child" <<endl;
                		setpgrp();
-               		//cout<< "still in child" <<endl;
 					if(execvp(args[0], args) == -1){
-						//cout<< "err" <<endl;
 						cerr << "error while executing " << cmdString << endl;
 						exit(1);
 					}
-					//cout<< "still in child1" <<endl;
-					break;// how does the child "kills " himself ?
+					break;
 			default:
-				//cout<< "child pid: "<<pID <<endl;
 				fg=args[0];
 				p_smash -> add_job_to_fg(pID, time(NULL), fg );
 				waitpid(pID, NULL, WUNTRACED);
-				//cout<< "child ended "<<pID <<endl;
 	            if (p_smash->get_fg_job()!=NULL)
 	            	{p_smash -> delete_fg_job();}
-	            cout<<"error was here"<<endl;
-	            //cout<< "child job deleted "<<pID <<endl;
-
 	}
 }
 //**************************************************************************************
@@ -304,26 +294,16 @@ int BgCmd(char* lineSize, smash_data* p_smash) // working
 						exit(1);
 						break;
 	        	case 0 :
-	                	// Child Process
-	        			//cout << "bg child "<< args[0] << endl;
 	               		setpgrp();
 						if(execvp(args[0], args) == -1){
 							cerr << "error while executing " << lineSize << endl;
+							cout<<"smash >";
 							exit(1);
-							//return -1;
 						}
-						//p_smash -> delete_bg_job(args[0]); --- make sure this is functioning with cmd!
-						break;// what happens when the child gets here?
+						break;
 				default:
 					bg=args[0];
 					p_smash -> add_new_bg_job(pID, time(NULL), bg);
-		            //p_smash -> delete_fg_job();
-					//waitpid(pID, NULL, WUNTRACED);
-					//p_smash->delete_bg_job(pID);
-					//cout<< "child ended "<<pID <<endl;
-					//if (p_smash->get_fg_job()!=NULL)
-					//	{p_smash -> delete_fg_job();}
-					cout<< "bg job "<<pID <<endl;
 
 		}
 	return 0;

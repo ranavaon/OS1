@@ -8,21 +8,13 @@
 #include "data.h"
 
 	time_t job::get_how_old(){
-		time_t now = time(NULL); ////////////////////////////////////////////////////implement this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		time_t now = time(NULL);
 		return (now - this->birth_time_stamp);
 	}
 
 	void smash_data::set_pwd(char* new_pwd){
 		this->last_pwd = this->current_pwd;
 		this->current_pwd = new_pwd;
-		/*const char* pwd_temp = (this-> current_pwd);
-		const char* new_pwd_const = new_pwd;
-		cout << new_pwd<< endl;
-		cout<< "in set pwd"<< endl;
-		//cout<< pwd_temp<< endl;
-		strcpy(this->last_pwd, pwd_temp);
-		cout<< "in set pwd2"<< endl;
-		strcpy(this->current_pwd, new_pwd_const);*/
 	}
 
 	void smash_data::print_history()
@@ -73,7 +65,6 @@
 			for(unsigned int i=0; i<this->bg_jobs.size()-1; i++){
 							iter++;
 			}
-			//iter = this->bg_jobs.
 		}
 		else{
 			for(unsigned int i=1; i<=job_index; i++){
@@ -111,7 +102,6 @@
 			}
 			if((*job_to_bg != NULL) && ((job_to_bg != bg_jobs.begin())||((*job_to_bg)->get_state() == SUSPENDED))){// means there is a suspended job
 				cout << "signal SIGCONT was sent to pid " << (*job_to_bg)->get_pid() << endl;
-				//cout<<"here"<<endl;
 				(*job_to_bg)->set_state(RUNNING);
 				if(!kill((*job_to_bg)->get_pid(), SIGCONT))
 					return 0;
@@ -143,15 +133,11 @@
 
 	void smash_data::delete_bg_job(pid_t pid){
 		list<job*>::iterator job_to_delete = this->bg_jobs.begin();
-		/*for(int i=0; i<job_index; i++){
-			job_to_delete++;
-		}*/
 		for(list<job*>::iterator iter = this->bg_jobs.begin(); iter != bg_jobs.end(); iter++){
 			if ( (*iter)->get_pid()== pid){
 				job_to_delete=iter;
 			}
 		}
-		//cout << "deleting bg job: " << (*job_to_delete)->get_name() << endl;
 		bg_jobs.erase(job_to_delete);
 	}
 
@@ -222,8 +208,6 @@
 
 
 	void smash_data::kill_all_jobs_rec(list<job*>::iterator iter, int i){
-		//int i = 1;
-		//for(list<job*>::reverse_iterator iter = this->bg_jobs.rbegin(); iter != bg_jobs.rend(); iter++){
 		if (iter == bg_jobs.end()){
 			return;
 		}

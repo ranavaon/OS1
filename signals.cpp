@@ -14,10 +14,9 @@
    Synopsis: handle the Control-C */
 #include "signals.h"
 
-void sigHandler(int signal)//not working good yet
+void sigHandler(int signal)
 {
 	pid_t pid;
-	job* pjob;
 	switch(signal)
 	{
 		case SIGTSTP:
@@ -29,12 +28,12 @@ void sigHandler(int signal)//not working good yet
 			cerr << "Error sending SIGTSTP signal" << endl;
 			return;
 		}
-		if (p_smash->get_fg_job()!=NULL)// all this part need to be chacked-i'm not sure if move to bg(0) is right
+		if (p_smash->get_fg_job()!=NULL)
 		{
 			p_smash->get_fg_job()->set_state(SUSPENDED);
 			p_smash->add_job_to_bg(p_smash->get_fg_job());
             if (p_smash->get_fg_job()!=NULL)
-            	{cout<<"here"<<endl;
+            	{
             	p_smash -> delete_fg_job();}
 		}
 		break;
@@ -52,7 +51,7 @@ void sigHandler(int signal)//not working good yet
 			p_smash->delete_fg_job();
 		break;
 
-		case SIGCHLD://not kiiling childes yet
+		case SIGCHLD:
 		pid=1;
 		while (pid > 0)
 		{
