@@ -34,20 +34,12 @@ int main(int argc, char *argv[])
 	signal(SIGINT,sigHandler);
 	signal(SIGCHLD,sigHandler);
 	//signal declarations
-	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
-	 /* add your code here */
 
-	/************************************/
-	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
-	//set your signal handlers here
-	/* add your code here */
-
-	/************************************/
 
 	/************************************/
 	// Init globals
 	char pwd_[MAX_LINE_SIZE];
-	smash_data my_smash(getpid(),time(NULL),getcwd(pwd_, MAX_LINE_SIZE));// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!put as an argument this process's PID!!!!!!!!!!!!!!!!!!!!!!!!!!
+	smash_data my_smash(getpid(),time(NULL),getcwd(pwd_, MAX_LINE_SIZE));
 	p_smash = &my_smash;
 	char cmdString_Bg[MAX_LINE_SIZE];
 	char cmdString_Exe[MAX_LINE_SIZE];

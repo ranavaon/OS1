@@ -1,17 +1,10 @@
-/*
- * signals.cpp
- *
- *  Created on: Nov 30, 2018
- *      Author: os
- */
-
-// signals.c
+// signals.cpp
 // contains signal handler funtions
 // contains the function/s that set the signal handlers
 
 /*******************************************/
-/* Name: handler_cntlc
-   Synopsis: handle the Control-C */
+/* Name: sigHandler
+   Synopsis: handle the Control-C, Control-Z and Zombies */
 #include "signals.h"
 
 void sigHandler(int signal)
@@ -19,7 +12,7 @@ void sigHandler(int signal)
 	pid_t pid;
 	switch(signal)
 	{
-		case SIGTSTP:
+		case SIGTSTP://handel Control Z
 				if (p_smash->get_fg_job() == NULL)
 			break;
 		cout << "signal SIGTSTP was sent to pid " << p_smash->get_fg_job()->get_pid() << endl;
@@ -38,7 +31,7 @@ void sigHandler(int signal)
 		}
 		break;
 
-		case SIGINT:
+		case SIGINT://handel Control -C
 			if (p_smash->get_fg_job() == NULL)
 				break;
 			cout << "signal SIGINT was sent to pid " << p_smash->get_fg_job()->get_pid() << endl;
@@ -51,11 +44,11 @@ void sigHandler(int signal)
 			p_smash->delete_fg_job();
 		break;
 
-		case SIGCHLD:
+		case SIGCHLD://handel zombies
 		pid=1;
 		while (pid > 0)
 		{
-			pid = waitpid(-1,NULL,WNOHANG);//find the zombie proccess
+			pid = waitpid(-1,NULL,WNOHANG);
 
 			if (pid<=0)
 				return;
